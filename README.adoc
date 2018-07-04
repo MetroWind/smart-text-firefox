@@ -1,0 +1,9 @@
+= Smart Text for Firefox
+MetroWind <chris.corsair@gmail.com>
+
+Smart text substitutions on-the-fly when you input. Replace straight
+quotes with curly quotes (smart quotes), dumb dashes with
+en-dash/em-dash (smart dashes), 3 dots with ellipsis, and 6 dots with
+2 mid-line ellipsis (used in Chinese).
+
+image::https://github.com/MetroWind/smart-text-firefox/raw/master/screenshot-0.png[Screenshot]
