@@ -1,3 +1,12 @@
+let TextBoxQueries = [
+    'input[type="text"]',
+    'input[type="search"]',
+    'input:not([type])',
+    'input[type=""]',
+    'textarea',
+    // 'div[contenteditable="true"]',
+]
+
 function replaceAt(string, index, replace)
 {
     return string.substring(0, index) + replace + string.substring(index + 1);
@@ -13,45 +22,43 @@ function isOneOf(element, seq)
     return seq.indexOf(element) !== -1;
 }
 
-function textOnChange(event)
+function processText(text)
 {
-    var Text = event.target.value;
-    
-    var LastChar = Text.slice(-1);
-    var PrevChar = Text.slice(-2, -1);
-    var PrevPrevChar = Text.slice(-3, -2);
+    var LastChar = text.slice(-1);
+    var PrevChar = text.slice(-2, -1);
+    var PrevPrevChar = text.slice(-3, -2);
 
     // Double quote
     if(LastChar === '"')
     {
-        if(isOneOf(PrevChar, " ‘") || Text.length == 1)
+        if(isOneOf(PrevChar, " ‘") || text.length == 1)
         {
             console.log("Left double quote");
-            Text = replaceAt(Text, Text.length-1, '“');
-            console.log("--> " + Text);
+            text = replaceAt(text, text.length-1, '“');
+            console.log("--> " + text);
         }
     }
     else if(isOneOf(LastChar, " '.,!?-;:") && PrevChar === '"')
     {
         console.log("Right double quote");
-        Text = replaceAt(Text, Text.length-2, '”');
-        console.log("--> " + Text);
+        text = replaceAt(text, text.length-2, '”');
+        console.log("--> " + text);
     }
 
     // Single quote
     else if(LastChar === "'")
     {
-        if(PrevChar === ' ' || Text.length == 1)
+        if(PrevChar === ' ' || text.length == 1)
         {
             console.log("Left single quote");
-            Text = replaceAt(Text, Text.length-1, '‘');
-            console.log("--> " + Text);
+            text = replaceAt(text, text.length-1, '‘');
+            console.log("--> " + text);
         }
         else
         {
             console.log("Right single quote/apostrophe");
-            Text = replaceAt(Text, Text.length-1, '’');
-            console.log("--> " + Text);
+            text = replaceAt(text, text.length-1, '’');
+            console.log("--> " + text);
         }
     }
 
@@ -60,11 +67,11 @@ function textOnChange(event)
     {
         if(PrevChar === '-')    // Dumb dash
         {
-            Text = replaceLastN(Text, 2, "–"); // En-dash
+            text = replaceLastN(text, 2, "–"); // En-dash
         }
         else if(PrevChar === '–') // En-dash
         {
-            Text = replaceLastN(Text, 2, "—"); // Em-dash
+            text = replaceLastN(text, 2, "—"); // Em-dash
         }
     }
 
@@ -72,26 +79,44 @@ function textOnChange(event)
     {
         if(PrevChar === '.' && PrevPrevChar === '.')
         {
-            Text = replaceLastN(Text, 3, "…");
-            if(Text.slice(-2) === "……")
+            text = replaceLastN(text, 3, "…");
+            if(text.slice(-2) === "……")
             {
-                Text = replaceLastN(Text, 2, "⋯⋯");
+                text = replaceLastN(text, 2, "⋯⋯");
             }
         }
     }
-    
-    event.target.value = Text;
+
+    return text;
+}
+
+function textOnChangeValue(event)
+{
+    event.target.value = processText(event.target.value);
+}
+
+function textOnChangeText(event)
+{
+    event.target.textContent = processText(event.target.textContent);
+    // Need a way to maintain cursor position.
 }
 
 function bindAll(root_node)
 {
-    var Texts = root_node.querySelectorAll('input[type="text"], input[type="search"], input:not([type]), input[type=""], textarea');
+    var Texts = root_node.querySelectorAll(TextBoxQueries.join(", "));
 
+    console.log("Binding...");
     for(var i = 0; i < Texts.length; ++i)
     {
-        console.log("Binding...");
         var Text = Texts[i];
-        Text.addEventListener("keyup", textOnChange, false);
+        if(Text.tagName.toLowerCase() == "div")
+        {
+            Text.addEventListener("input", textOnChangeText, false);
+        }
+        else
+        {
+            Text.addEventListener("input", textOnChangeValue, false);
+        }
     }
 }
 

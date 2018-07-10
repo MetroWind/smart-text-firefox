@@ -1,7 +1,12 @@
 {
     "manifest_version": 2,
     "name": "Smart Text",
-    "version": "1.3",
+    "version": "1.4",
+    "developer": {
+        "name": "MetroWind",
+        "url": "https://darksair.org/"
+    },
+    "homepage_url": "https://github.com/MetroWind/smart-text-firefox",
 
     "description": "Smart text substitutions on-the-fly when you input. Replace straight quotes with curly quotes (smart quotes), dumb dashes with en-dash/em-dash (smart dashes), 3 dots with ellipsis, and 6 dots with 2 mid-line ellipsis (used in Chinese). Right now you need to disable the addon to stop substitution. I’ll add an switch later.",
 
